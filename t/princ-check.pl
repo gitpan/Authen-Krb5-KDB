@@ -1,4 +1,5 @@
 
+use POSIX qw(strftime);
 use Authen::Krb5::KDB_H qw(:Attributes);
 
 sub check_principals ($$) {
@@ -95,9 +96,12 @@ sub check_principals ($$) {
 				'c124913c737465696e65722f61646d696e40544553542e4f524700');
 		    print "ok 34\n";
 
+		    # need to convert date to local timezone
+		    my @tm = localtime(1016145089);
+		    my $date = strftime("%a %b %d %H:%M:%S %Z %Y", @tm);
 		    print "not "
 			unless ($tl->parse_contents eq
-				"Thu Mar 14 17:31:29 EST 2002: steiner/admin\@TEST.ORG\c@");
+				"$date: steiner/admin\@TEST.ORG\c@");
 		    print "ok 35\n";
 		}
 	    }

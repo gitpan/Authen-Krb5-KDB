@@ -1,5 +1,15 @@
 Revision history for Perl extension Authen::Krb5::KDB.
 
+2002/10/10 by <steiner@bakerst.rutgers.edu> (Dave Steiner)
+
+	Release 0.09
+
+2002/10/10 by <steiner@bakerst.rutgers.edu> (Dave Steiner)
+
+	t/princ-check.pl
+	- Don't hardcode date to a specific timezone; call localtime
+	and strftime within test
+
 2002/10/09 by <steiner@bakerst.rutgers.edu> (Dave Steiner)
 
 	Release 0.08
@@ -206,7 +216,7 @@ Revision history for Perl extension Authen::Krb5::KDB.
 	- Finish documentation
 
 	KDB.pm; gen_kdb_h.plx; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
-	- use RCS version numbers for $VERSION and add '$Id: Changes,v 1.9 2002/10/09 20:33:19 steiner Exp $' in comments
+	- use RCS version numbers for $VERSION and add '$Id: Changes,v 1.10 2002/10/10 14:23:29 steiner Exp $' in comments
 
 	gen_kdb_h.plx
 	- get Krb5 version from patchlevel.h
