@@ -1,14 +1,17 @@
 package Authen::Krb5::KDB::V3;
 
-# $Id: V3.pm,v 1.9 2002/03/19 19:55:15 steiner Exp $
+# $Id: V3.pm,v 1.12 2002/04/17 22:16:58 steiner Exp $
 
 use Carp;
 use POSIX qw(strftime);
-use Authen::Krb5::KDB_H qw(KRB5_KDB_V1_BASE_LENGTH);
+use Authen::Krb5::KDB_H qw(:Attributes KRB5_KDB_V1_BASE_LENGTH);
+use Authen::Krb5::KDB::TL;
+use Authen::Krb5::KDB::Key;
+use Authen::Krb5::KDB::Utils;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.9 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.12 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # If value is 1, the value is read/write and we build the accessor function;
 #  if 0, the value is read-only and an accessor function is built.
@@ -115,9 +118,9 @@ sub new_princ {
     $self->{'expiration'} = shift @data;
     $self->{'pw_expiration'} = shift @data;
     $self->{'last_success'} = shift @data;
-    $self->{'last_success_dt'} = _strdate($self->{'last_success'});
+    $self->{'last_success_dt'} = strdate($self->{'last_success'});
     $self->{'last_failed'} = shift @data;
-    $self->{'last_failed_dt'} = _strdate($self->{'last_failed'});
+    $self->{'last_failed_dt'} = strdate($self->{'last_failed'});
     $self->{'fail_auth_count'} = shift @data;
 
     if ($args{'checks'}) {
@@ -131,11 +134,16 @@ sub new_princ {
 	my $len = shift @data;
 	my $contents = shift @data;
 	if ($args{'checks'}) {
-	    if (_check_len($len*2, $contents)) {
+	    if (check_length($len*2, $contents)) {
 		carp "princ tl length field not ok at line $args{'lineno'}";
 	    }
 	}
-	push @{$self->{'tl_data'}}, [ $type, $len, $contents ];
+	push @{$self->{'tl_data'}},
+             Authen::Krb5::KDB::TL->new ( checks   => $args{'checks'},
+					  lineno   => $args{'lineno'},
+					  type     => $type,
+					  'length' => $len,
+					  contents => $contents );
     }
 
     for my $i (1..$self->{'n_key_data'}) {
@@ -149,18 +157,23 @@ sub new_princ {
 	    my $contents = shift @data;
 	    $n_key_data_fields += 3;
 	    if ($args{'checks'}) {
-		if (_check_len($len*2, $contents)) {
+		if (check_length($len*2, $contents)) {
 		    carp "princ key length field not ok at line $args{'lineno'}";
 		}
 	    }
 	    push @$vers, [ $type, $len, $contents ];
 	}
-	push @{$self->{'key_data'}}, [ $ver, $kvno, $vers ];
+	push @{$self->{'key_data'}},
+             Authen::Krb5::KDB::Key->new ( checks  => $args{'checks'},
+					   lineno  => $args{'lineno'},
+					   version => $ver,
+					   kvno    => $kvno,
+					   data    => $vers );
     }
 
     $self->{'e_data'} = shift @data;
     if ($args{'checks'}) {
-	if (_check_len($self->{'e_length'}, $self->{'e_data'})) {
+	if (check_length($self->{'e_length'}, $self->{'e_data'})) {
 	    carp "princ e_data length field not ok at line $args{'lineno'}";
 	}
     }
@@ -176,6 +189,10 @@ sub new_princ {
 
     if (@data) {
 	carp "Still data left from principal at line $args{'lineno'}: @data";
+    }
+
+    if ($args{'checks'} == 2) {
+	_check_level2($self, $args{'lineno'});
     }
 
     bless($self, $class);
@@ -196,6 +213,9 @@ sub print_principal {
     print "E Length:      ", $self->e_length(), "\n";
     print "Name:          ", $self->name(), "\n";
     print "Attributes:    ", $self->attributes(), "\n";
+    if ($self->attributes()) {
+	print "               ", $self->get_attributes(), "\n";
+    }
     print "MaxLife:       ", $self->max_life(), "\n";
     print "MaxRenewLife:  ", $self->max_renew_life(), "\n";
     print "Expiration:    ", $self->expiration(), "\n";
@@ -209,21 +229,22 @@ sub print_principal {
     my $i = 1;
     print "TL Data:\n";
     foreach my $tl (@{$self->tl_data()}) {
-	print " $i: Type:     $tl->[0]\n";
-	print "    Length:   $tl->[1]\n";
-	print "    Contents: $tl->[2]\n";
+	print " $i: Type:     ", $tl->type(), "\n";
+	print "    Length:   ",  $tl->length(), "\n";
+	print "    Contents: ",  $tl->contents(), "\n";
+	print "      ", $tl->parse_contents(), "\n";
 	$i++;
     }
     
     $i = 1;
     print "Key Data:\n";
     foreach my $key (@{$self->key_data()}) {
-	print " $i: Ver: $key->[0]\n";
-	print "    Kvno: $key->[1]\n";
-	foreach my $data (@{$key->[2]}) {
-	    print "      Type:     $data->[0]\n";
-	    print "      Length:   $data->[1]\n";
-	    print "      Contents: $data->[2]\n";
+	print " $i: Ver: ", $key->version(), "\n";
+	print "    Kvno: ", $key->kvno(), "\n";
+	while ($key->next_data()) {
+	    print "      Type:     ", $key->type(), "\n";
+	    print "      Length:   ", $key->length(), "\n";
+	    print "      Contents: ", $key->contents(), "\n";
 	}
 	$i++;
     }
@@ -232,24 +253,107 @@ sub print_principal {
     print "\n";
 }
 
-sub _strdate {
-    my $when = shift;
-    return "[never]"  if (not $when);
-    my @tm = localtime($when);
-    return strftime("%a %b %d %H:%M:%S %Z %Y", @tm);
+sub get_attributes {
+    my $self = shift;
+    my @attrs;
+
+    if ($self->type() ne 'princ') {
+	croak "data is not a princ record but a '" . $self->type() . "'";
+    }
+
+    if ($self->attributes & KRB5_KDB_DISALLOW_POSTDATED) {
+	push @attrs, 'DISALLOW_POSTDATED';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_FORWARDABLE) {
+	push @attrs, 'DISALLOW_FORWARDABLE';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_TGT_BASED) {
+	push @attrs, 'DISALLOW_TGT_BASED';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_RENEWABLE) {
+	push @attrs, 'DISALLOW_RENEWABLE';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_PROXIABLE) {
+	push @attrs, 'DISALLOW_PROXIABLE';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_DUP_SKEY) {
+	push @attrs, 'DISALLOW_DUP_SKEY';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_ALL_TIX) {
+	push @attrs, 'DISALLOW_ALL_TIX';
+    }
+    if ($self->attributes & KRB5_KDB_REQUIRES_PRE_AUTH) {
+	push @attrs, 'REQUIRES_PRE_AUTH';
+    }
+    if ($self->attributes & KRB5_KDB_REQUIRES_HW_AUTH) {
+	push @attrs, 'REQUIRES_HW_AUTH';
+    }
+    if ($self->attributes & KRB5_KDB_REQUIRES_PWCHANGE) {
+	push @attrs, 'REQUIRES_PWCHANGE';
+    }
+    if ($self->attributes & KRB5_KDB_DISALLOW_SVR) {
+	push @attrs, 'DISALLOW_SVR';
+    }
+    if ($self->attributes & KRB5_KDB_PWCHANGE_SERVICE) {
+	push @attrs, 'PWCHANGE_SERVICE';
+    }
+    if ($self->attributes & KRB5_KDB_SUPPORT_DESMD5) {
+	push @attrs, 'SUPPORT_DESMD5';
+    }
+    if ($self->attributes & KRB5_KDB_NEW_PRINC) {
+	push @attrs, 'NEW_PRINC';
+    }
+    return join(' ', @attrs);
 }
 
-# Returns true if two values don't "match", false if they do "match".
-#  To "match": If the first value is 0, the second one must be -1;
-#              Or the first value must be the length of the second.
-sub _check_len ($$) {
-    my $len = shift;
-    my $data = shift;
+sub _check_level2 ($$) {
+    my $self = shift;
+    my $lineno = shift;
 
-    if ($len == 0) {
-	return (not ($data == -1));
-    } else {
-	return ($len != length($data));
+    # check TL and Key data elsewhere
+
+    if ($self->{'name_len'} !~ /^\d+$/) {
+	carp "name_len is not valid at line $lineno: $self->{'name_len'}";
+    }
+    if ($self->{'n_tl_data'} !~ /^\d+$/) {
+	carp "n_tl_data is not valid at line $lineno: $self->{'n_tl_data'}";
+    }
+    if ($self->{'n_key_data'} !~ /^\d+$/) {
+	carp "n_key_data is not valid at line $lineno: $self->{'n_key_data'}";
+    }
+    if ($self->{'e_length'} !~ /^\d+$/) {
+	carp "e_length is not valid at line $lineno: $self->{'e_length'}";
+    }
+    if ($self->{'name'} !~ /^[!-~]+$/) { # any ASCII printable char
+	carp "name is not valid at line $lineno: $self->{'name'}";
+    }
+    if ($self->{'attributes'} !~ /^\d+$/) {
+	carp "attributes is not valid at line $lineno: $self->{'attributes'}";
+    }
+    if ($self->{'max_life'} !~ /^\d+$/) {
+	carp "max_life is not valid at line $lineno: $self->{'max_life'}";
+    }
+    if ($self->{'max_renew_life'} !~ /^\d+$/) {
+	carp "max_renew_life is not valid at line $lineno: $self->{'max_renew_life'}";
+    }
+    if ($self->{'expiration'} !~ /^\d+$/) {
+	carp "expiration is not valid at line $lineno: $self->{'expiration'}";
+    }
+    if ($self->{'pw_expiration'} !~ /^\d+$/) {
+	carp "pw_expiration is not valid at line $lineno: $self->{'pw_expiration'}";
+    }
+    if ($self->{'last_success'} !~ /^\d+$/) {
+	carp "last_success is not valid at line $lineno: $self->{'last_success'}";
+    }
+    if ($self->{'last_failed'} !~ /^\d+$/) {
+	carp "last_failed is not valid at line $lineno: $self->{'last_failed'}";
+    }
+    if ($self->{'fail_auth_count'} !~ /^\d+$/) {
+	carp "fail_auth_count is not valid at line $lineno: $self->{'fail_auth_count'}";
+    }
+    if ($self->{'e_data'} ne '-1' and
+	$self->{'e_data'} !~ /^[\da-f]+$/) {
+	carp "e_data is not valid at line $lineno: $self->{'e_data'}";
     }
 }
 
@@ -268,7 +372,7 @@ sub last_success {
     my $self = shift;
     if (@_) {
 	$self->{'last_success'} = shift;
-	$self->{'last_success_dt'} = _strdate($self->{'last_success'});
+	$self->{'last_success_dt'} = strdate($self->{'last_success'});
     }
     return $self->{'last_success'};
 }
@@ -277,12 +381,10 @@ sub last_failed {
     my $self = shift;
     if (@_) {
 	$self->{'last_failed'} = shift;
-	$self->{'last_failed_dt'} = _strdate($self->{'last_failed'});
+	$self->{'last_failed_dt'} = strdate($self->{'last_failed'});
     }
     return $self->{'last_failed'};
 }
-
-### XXX next two accessor methods need work
 
 sub tl_data {
     my $self = shift;
@@ -463,9 +565,29 @@ Methods to retrieve and set data fields are:
 
 =item  tl_data
 
+See the L<Authen::Krb5::KDB::TL> for methods to deal with TL objects.
+
 =item  key_data
 
+See the L<Authen::Krb5::KDB::Key> for methods to deal with Key
+objects.
+
 =item  e_data
+
+=back
+
+Other methods include:
+
+=over 4
+
+=item  print_principal
+
+Print out the data on a principal, similar to the B<get_principal>
+command in B<kadmin>, but more verbose.
+
+=item  get_attributes
+
+Return a string of all the attributes set for this principal.
 
 =back
 
@@ -485,6 +607,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H.
+perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H,
+Authen::Krb5::KDB::TL, Authen::Krb5::KDB::Key.
 
 =cut

@@ -1,13 +1,13 @@
 package Authen::Krb5::KDB::V2;
 
-# $Id: V2.pm,v 1.6 2002/03/19 19:55:11 steiner Exp $
+# $Id: V2.pm,v 1.7 2002/03/20 16:29:57 steiner Exp $
 
 use Carp;
 use POSIX qw(strftime);
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.6 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 sub new {
     my $proto = shift;
@@ -66,7 +66,7 @@ __END__
 
 =head1 NAME
 
-Authen::Krb5::KDB::V2 - objects for Kerberos V5 database V2 principals and policies
+Authen::Krb5::KDB::V2 - objects for Kerberos V5 database V2 principals
 
 
 =head1 SYNOPSIS

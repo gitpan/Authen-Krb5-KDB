@@ -1,6 +1,6 @@
 #!perl
 
-# $Id: gen_kdb_h.plx,v 1.5 2002/03/19 19:55:43 steiner Exp $
+# $Id: gen_kdb_h.plx,v 1.7 2002/04/19 16:33:05 steiner Exp $
 
 use ExtUtils::MakeMaker;
 use Config;
@@ -10,15 +10,21 @@ use strict;
 
 use vars qw($VERSION $Usage %Comments $Krb5Version);
 
-$VERSION = do{my@r=q$Revision: 1.5 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 $Usage = "Usage: $0 <krb5_src_path>\n";
 
 my %defines = ();
 my @defines = ();
 my $PM_File = "KDB_H.pm";
+my $dist_PM_File = "KDB_H.pm.dist";
 my $C_File = "kdb_h.c";
+my $cppdefine = '-DSECURID';	# want this value regardless
 
+if (! -f $dist_PM_File) {	# save distributed copy, but only first time
+    rename($PM_File, $dist_PM_File) or
+	warn "Can't rename $PM_File to $dist_PM_File: $!";
+}
 unlink $PM_File if -f $PM_File;
 open OUT, ">$PM_File" or die "Cannot open $PM_File: $!";
 select OUT;
@@ -87,9 +93,14 @@ sub process_file {
 		$Comments{$comment} = [];
 	    }
 	}
-	if (/^\s*#\s*define\s+(KRB5_KDB_\w+)\s+/) {
-	    push @defines, $1;
-	    push @{$Comments{$comment}}, $1;
+	if (/^\s*#\s*define\s+(KRB5_(?:KDB|TL)_\w+)\s+/) {
+	    my $name = $1;
+	    push @defines, $name;
+	    if ($name =~ /_TL_/) {
+		push @{$Comments{'TLTypes'}}, $name;
+	    } else {
+		push @{$Comments{$comment}}, $name;
+	    }
 	}
 
 	$comment = ""  if /^\s*$/;  # reset
@@ -117,17 +128,17 @@ sub write_pm {
     # invoke CPP and read the output
 
     if ($^O eq 'VMS') {
-	my $cpp = "$Config{cppstdin} $Config{cppflags} $Config{cppminus}";
+	my $cpp = "$Config{cppstdin} $Config{cppflags} $cppdefine $Config{cppminus}";
 	$cpp =~ s/sys\$input//i;
 	open(CPPO,"$cpp  $C_File |") or
           die "Cannot exec $Config{cppstdin}";
     } elsif($^O eq 'next') {
 	# NeXT will do syntax checking unless it is reading from stdin
-        my $cpp = "$Config{cppstdin} $Config{cppflags} $Config{cppminus}";
+        my $cpp = "$Config{cppstdin} $Config{cppflags} $cppdefine $Config{cppminus}";
         open(CPPO,"$cpp < $C_File |")
 	    or die "Cannot exec $cpp";
     } else {
-	open(CPPO,"$Config{cpprun} $Config{cppflags} $C_File |") or
+	open(CPPO,"$Config{cpprun} $Config{cppflags} $cppdefine $C_File |") or
 	    die "Cannot exec $Config{cpprun}";
     }
 

@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::V4;
 
-# $Id: V4.pm,v 1.7 2002/03/19 19:55:20 steiner Exp $
+# $Id: V4.pm,v 1.9 2002/04/17 22:13:13 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB::V3;
@@ -9,7 +9,7 @@ use vars qw($VERSION @ISA);
 
 @ISA = ( "Authen::Krb5::KDB::V3" );
 
-$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.9 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 my %Policy_Fields = (
     'type'           => 0,
@@ -84,6 +84,10 @@ sub new_policy {
 	carp "still data left from policy '$self->{'name'}' at line $args{'lineno'}: '@data'";
     }
 
+    if ($args{'checks'} == 2) {
+	_check_level2($self, $args{'lineno'});
+    }
+
     bless($self, $class);
     return $self;
 }
@@ -102,7 +106,34 @@ sub print_policy {
             $self->pw_min_classes(), "\n";
     print "Number of old keys kept: ", $self->pw_history_num(), "\n";
     print "Reference count: ", $self->policy_refcnt(), "\n";
+    print "\n";
+}
 
+sub _check_level2 ($$) {
+    my $self = shift;
+    my $lineno = shift;
+
+    if ($self->{'name'} !~ /^[!-~]+$/) { # any ASCII printable char
+	carp "name is not valid at line $lineno: $self->{'name'}";
+    }
+    if ($self->{'pw_min_life'} !~ /^\d+$/) {
+	carp "pw_min_life is not valid at line $lineno: $self->{'pw_min_life'}";
+    }
+    if ($self->{'pw_max_life'} !~ /^\d+$/) {
+	carp "pw_max_life is not valid at line $lineno: $self->{'pw_max_life'}";
+    }
+    if ($self->{'pw_min_length'} !~ /^\d+$/) {
+	carp "pw_min_length is not valid at line $lineno: $self->{'pw_min_length'}";
+    }
+    if ($self->{'pw_min_classes'} !~ /^\d+$/) {
+	carp "pw_min_classes is not valid at line $lineno: $self->{'pw_min_classes'}";
+    }
+    if ($self->{'pw_history_num'} !~ /^\d+$/) {
+	carp "pw_history_num is not valid at line $lineno: $self->{'pw_history_num'}";
+    }
+    if ($self->{'policy_refcnt'} !~ /^\d+$/) {
+	carp "policy_refcnt is not valid at line $lineno: $self->{'policy_refcnt'}";
+    }
 }
 
 foreach my $field (keys %Policy_Fields) {
@@ -241,9 +272,29 @@ Methods to retrieve and set data fields are:
 
 =item  tl_data
 
+See the L<Authen::Krb5::KDB::TL> for methods to deal with TL objects.
+
 =item  key_data
 
+See the L<Authen::Krb5::KDB::Key> for methods to deal with Key
+objects.
+
 =item  e_data
+
+=back
+
+Other methods include:
+
+=over 4
+
+=item  print_principal
+
+Print out the data on a principal, similar to the B<get_principal>
+command in B<kadmin>, but more verbose.
+
+=item  get_attributes
+
+Return a string of all the attributes set for this principal.
 
 =back
 
@@ -297,6 +348,17 @@ Methods to retrieve and set policy data fields are:
 
 =back
 
+Other methods include:
+
+=over 4
+
+=item  print_policy
+
+Print out the policy data, similar to the B<get_policy> command in
+B<kadmin>.
+
+=back
+
 
 =head1 AUTHOR
 
@@ -313,6 +375,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H.
+perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H,
+Authen::Krb5::KDB::TL, Authen::Krb5::KDB::Key.
 
 =cut

@@ -1,14 +1,17 @@
 package Authen::Krb5::KDB;
 
-# $Id: KDB.pm,v 1.6 2002/03/19 19:55:30 steiner Exp $
+# $Id: KDB.in,v 1.8 2002/04/18 21:13:18 steiner Exp $
 
 use Carp;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.6 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 my $Version;
+
+#%%[This line will be removed in the .pm] will be patched in the .pm file
+my $KDB5_UTIL = "%%K_SBIN_PATH%%/kdb5_util";
 
 my $LineNo = 1;
 
@@ -52,7 +55,7 @@ sub new {
     $self->{'checks'} = $args{'checks'} ? $args{'checks'} : 1;
     $self->{'save'} = $args{'save'} ? $args{'save'} : 0;
     $self->{'file'} = $args{'file'} ? $args{'file'} :
-	"/usr/local/krb5/sbin/kdb5_util -r $self->{'realm'} dump |";
+	"$KDB5_UTIL -r $self->{'realm'} dump |";
     $self->{'principals'} = [];
     $self->{'policies'} = [];
 
@@ -165,6 +168,10 @@ Authen::Krb5::KDB - Parse Kerberos V5 database dumps
 
 
 =head1 DESCRIPTION
+
+Constructor and methods to parse Kerberos V5 database files, either
+directly from kerberos (via B<kdb5_util>) or from already dumped files
+(e.g. F<slave_datatrans>).
 
 =over 4
 

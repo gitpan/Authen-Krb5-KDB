@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::V5;
 
-# $Id: V5.pm,v 1.5 2002/03/19 19:55:25 steiner Exp $
+# $Id: V5.pm,v 1.7 2002/04/17 22:15:47 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB::V4;
@@ -9,7 +9,7 @@ use vars qw($VERSION @ISA);
 
 @ISA = ( "Authen::Krb5::KDB::V4" );
 
-$VERSION = do{my@r=q$Revision: 1.5 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # Basic format of the data is the same as V4, just the encoded data
 # is different.
@@ -133,9 +133,29 @@ Methods to retrieve and set data fields are:
 
 =item  tl_data
 
+See the L<Authen::Krb5::KDB::TL> for methods to deal with TL objects.
+
 =item  key_data
 
+See the L<Authen::Krb5::KDB::Key> for methods to deal with Key
+objects.
+
 =item  e_data
+
+=back
+
+Other methods include:
+
+=over 4
+
+=item  print_principal
+
+Print out the data on a principal, similar to the B<get_principal>
+command in B<kadmin>, but more verbose.
+
+=item  get_attributes
+
+Return a string of all the attributes set for this principal.
 
 =back
 
@@ -189,6 +209,17 @@ Methods to retrieve and set policy data fields are:
 
 =back
 
+Other methods include:
+
+=over 4
+
+=item  print_policy
+
+Print out the policy data, similar to the B<get_policy> command in
+B<kadmin>.
+
+=back
+
 
 =head1 AUTHOR
 
@@ -205,6 +236,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H.
+perl(1), kerberos(1), Authen::Krb5::KDB, Authen::Krb5::KDB_H,
+Authen::Krb5::KDB::TL, Authen::Krb5::KDB::Key.
 
 =cut
