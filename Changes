@@ -1,0 +1,94 @@
+Revision history for Perl extension Authen::Krb5::KDB.
+
+2002/03/19 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Release 0.05
+
+2002/03/19 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Makefile.PL
+	- Change compress to gzip
+
+	Change name from Krb5::KDB and Krb5::KDB_H to
+	Authen::Krb5::KDB and Authen::Krb5::KDB_H respectively.
+
+2002/03/18 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Release 0.04
+
+2002/03/15 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	KDB.pm; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
+	- slight pod updates
+
+2002/03/14 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	KDB.pm; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
+	- fix parsing bug (oops, V3 doesn't have an initial "tag")
+	- updated documentation for new 'new()' method in V[2-5].pm
+	- keep track of line no. in data file for error messages
+
+	KDB/V4.pm
+	- fix swapped method calls in print_policy
+
+	KDB.pm
+	- Finish documentation
+
+	t/v5.t (t/slave_datatrans); t/v4.t (t/slave_datatrans.b7);
+	 t/v3.t (t/slave_datatrans.b6); t/v2.t (t/slave_datatrans.old);
+	 t/README; t/slave_datatrans.ov
+	- initial version of test files and data
+
+2002/03/13 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	README; gen_kdb_h.plx; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
+	- Finish documentation
+
+	KDB.pm; gen_kdb_h.plx; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
+	- use RCS version numbers for $VERSION and add '$Id: Changes,v 1.3 2002/03/19 20:31:00 steiner Exp $' in comments
+
+	gen_kdb_h.plx
+	- get Krb5 version from patchlevel.h
+	- cleanup code
+
+2002/03/12 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	KDB/V3.pm
+	- Fix some accessors to recompute length fields when set
+
+2002/03/01 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	MANIFEST
+	- added gen_kdb_h.plx and KDB_H.pm
+
+2002/02/28 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Release 0.03
+
+2002/02/20 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	gen_kdb_h.plx; KDB_H.pm
+	- initial versions
+
+	KDB/V3.pm
+	- use Krb5::KDB_H qw(KRB5_KDB_V1_BASE_LENGTH);
+
+2002/02/20 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	KDB/V3.pm
+	- fix accessors so some are read-only while others are red/write
+	- use methods in print_principal() instead of direct access
+
+	KDB/V4.pm
+	- fix accessors so some are read-only while others are red/write
+	- use methods in print_principal() instead of direct access
+
+2002/02/19 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Release 0.02
+	Change name from Kerberos:: to Krb5::
+
+2002/02/08 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	Original version 0.01; created by h2xs 1.18
+
