@@ -1,5 +1,6 @@
 KDB.in
 KDB_pm.PL
+d/KDB.pm
 KDB_H.pm
 gen_kdb_h.plx
 Changes

@@ -1,7 +1,7 @@
 #  -*- Perl -*-
-# $Id: Makefile.PL,v 1.8 2002/04/22 15:32:54 steiner Exp $
+# $Id: Makefile.PL,v 1.8 2002/04/22 15:32:54 steiner Exp steiner $
 
-$VERSION = "0.06";		# Module version number
+$VERSION = "0.07";		# Module version number
 
 use ExtUtils::MakeMaker;
 

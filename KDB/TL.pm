@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::TL;
 
-# $Id: TL.pm,v 1.1 2002/04/16 23:00:13 steiner Exp $
+# $Id: TL.pm,v 1.2 2002/05/06 20:12:14 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB_H qw(:TLTypes);
@@ -8,7 +8,7 @@ use Authen::Krb5::KDB::Utils;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.1 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.2 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # If value is 1, the value is read/write and we build the accessor function;
 #  if 0, the value is read-only and an accessor function is built.
@@ -104,7 +104,8 @@ sub contents {
     my $self = shift;
     if (@_) {
 	$self->{'contents'} = shift;
-	$self->{'length'} = length($self->{'contents'})/2; #number of hex pairs
+	# number of hex pairs
+	$self->{'length'} = CORE::length($self->{'contents'})/2;
     }
     return $self->{'contents'};
 }

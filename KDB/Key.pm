@@ -1,13 +1,13 @@
 package Authen::Krb5::KDB::Key;
 
-# $Id: Key.pm,v 1.1 2002/04/16 23:01:26 steiner Exp $
+# $Id: Key.pm,v 1.2 2002/05/06 20:11:50 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB::Utils;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.1 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.2 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # If value is 1, the value is read/write and we build the accessor function;
 #  if 0, the value is read-only and an accessor function is built.
@@ -32,7 +32,7 @@ sub new {
         # kvno => N
         # data => array of type,len,contents tuples
     my $self = {};
-    $self->{'data_counter'} = -1;
+    $self->{'_data_cntr'} = -1;
 
     # check arguments
     if (not defined($args{'version'})) {
@@ -114,11 +114,11 @@ sub parse_contents {
 
 sub next_data {
     my $self = shift;
-    if (defined($self->{'data'}[$self->{'data_counter'}+1])) {
-	$self->{'data_counter'}++;
+    if (defined($self->{'data'}[$self->{'_data_cntr'}+1])) {
+	$self->{'_data_cntr'}++;
 	return 1;
     } else {
-	$self->{'data_counter'} = -1;
+	$self->{'_data_cntr'} = -1;
 	return 0;
     }
 }
@@ -127,29 +127,29 @@ sub type {
     my $self = shift;
     carp "Can't change value via type method"  if @_;
     carp "Need to call the next_data method before calling type method"
-	if ($self->{'data_counter'} == -1);
-    return $self->{'data'}[$self->{'data_counter'}]->{'type'};
+	if ($self->{'_data_cntr'} == -1);
+    return $self->{'data'}[$self->{'_data_cntr'}]->{'type'};
 }
 
 sub length {
     my $self = shift;
     carp "Can't change value via length method"  if @_;
     carp "Need to call the next_data method before calling length method"
-	if ($self->{'data_counter'} == -1);
-    return $self->{'data'}[$self->{'data_counter'}]->{'length'};
+	if ($self->{'_data_cntr'} == -1);
+    return $self->{'data'}[$self->{'_data_cntr'}]->{'length'};
 }
 
 sub contents {
     my $self = shift;
     carp "Need to call the next_data method before calling contents method"
-	if ($self->{'data_counter'} == -1);
+	if ($self->{'_data_cntr'} == -1);
     if (@_) {
-	$self->{'data'}[$self->{'data_counter'}]->{'contents'} = shift;
+	$self->{'data'}[$self->{'_data_cntr'}]->{'contents'} = shift;
 	# length is the number of hex pairs
-	$self->{'data'}[$self->{'data_counter'}]->{'length'} =
-	    length($self->{'data'}[$self->{'data_counter'}]->{'contents'})/2;
+	$self->{'data'}[$self->{'_data_cntr'}]->{'length'} =
+	  CORE::length($self->{'data'}[$self->{'_data_cntr'}]->{'contents'})/2;
     }
-    return $self->{'data'}[$self->{'data_counter'}]->{'contents'};
+    return $self->{'data'}[$self->{'_data_cntr'}]->{'contents'};
 }
 
 # generate rest of accessor methods

@@ -1,5 +1,14 @@
 Revision history for Perl extension Authen::Krb5::KDB.
 
+2002/05/06 by <steiner@td.rutgers.edu> (Dave Steiner)
+
+	KDB/Key.pm
+	- Make sure we get the correct CORE::length function where needed.
+	- Change 'data_counter' field in the object to '_data_cntr'.
+
+	KDB/TL.pm
+	- Make sure we get the correct CORE::length function where needed.
+
 2002/04/22 by <steiner@td.rutgers.edu> (Dave Steiner)
 
 	Release 0.06
@@ -168,7 +177,7 @@ Revision history for Perl extension Authen::Krb5::KDB.
 	- Finish documentation
 
 	KDB.pm; gen_kdb_h.plx; KDB/V5.pm; KDB/V4.pm; KDB/V3.pm; KDB/V2.pm
-	- use RCS version numbers for $VERSION and add '$Id: Changes,v 1.7 2002/04/22 15:34:35 steiner Exp $' in comments
+	- use RCS version numbers for $VERSION and add '$Id: Changes,v 1.8 2002/05/06 20:13:14 steiner Exp $' in comments
 
 	gen_kdb_h.plx
 	- get Krb5 version from patchlevel.h
