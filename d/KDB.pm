@@ -1,8 +1,10 @@
-#This is a dummy file so CPAN will find the file and a VERSION
-package Authen::Krb5::KDB;
-$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+### This is a dummy file so CPAN will find the file and VERSION
+### This file is generated from 'KDB.in' by 'gen_dummy_kdb_pm.plx'
 
-#This is to make sure require will return an error
+package Authen::Krb5::KDB;
+$VERSION = do{my@r=q$Revision: 1.10 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+
+# This is to make sure require will return an error
 0;
 __END__
 
@@ -93,7 +95,7 @@ errors from the pipe.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 =head1 COPYRIGHT
 

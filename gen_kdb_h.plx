@@ -1,6 +1,6 @@
 #!perl
 
-# $Id: gen_kdb_h.plx,v 1.7 2002/04/19 16:33:05 steiner Exp $
+# $Id: gen_kdb_h.plx,v 1.8 2002/10/09 20:38:25 steiner Exp $
 
 use ExtUtils::MakeMaker;
 use Config;
@@ -10,7 +10,7 @@ use strict;
 
 use vars qw($VERSION $Usage %Comments $Krb5Version);
 
-$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 $Usage = "Usage: $0 <krb5_src_path>\n";
 
@@ -245,7 +245,7 @@ EPOD
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 =head1 COPYRIGHT
 

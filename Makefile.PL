@@ -1,7 +1,7 @@
 #  -*- Perl -*-
-# $Id: Makefile.PL,v 1.8 2002/04/22 15:32:54 steiner Exp steiner $
+# $Id: Makefile.PL,v 1.10 2002/10/09 20:34:09 steiner Exp $
 
-$VERSION = "0.07";		# Module version number
+$VERSION = "0.08";		# Module version number
 
 use ExtUtils::MakeMaker;
 
@@ -63,7 +63,7 @@ sub MY::processPL {
 	or die "Error: no target for KDB.pm in: $inherited";
     
     # Pass an extra argument to KDB_pm.PL.
-    $inherited =~ s{(^\s+\$\(PERL\).*KDB_pm.PL\b)}
+    $inherited =~ s{(^\s+\$\(PERL(?:RUNINST)?\).*KDB_pm.PL\b)}
                    {$1 KDB5_UTIL_PATH=\$\(KDB5_UTIL_PATH\)}m
 	or die "Error: no call to KDB_pm.PL in: $inherited";
 
@@ -96,9 +96,20 @@ sub MY::post_initialize {
 WriteMakefile(
     'NAME'	=> 'Authen::Krb5::KDB',
     'VERSION'   => $VERSION,
-    'dist'      => { 'COMPRESS' => 'gzip', suffix => 'gz' },
     'PREREQ_PM' => { 'Carp' => 0, 'POSIX' => 0 },
     'PL_FILES'  => { 'KDB_pm.PL' => 'KDB.pm' },
 #    'PM'        => { 'KDB.pm' => '$(INST_LIBDIR)/KDB.pm' },
+    'dist'      => {
+	COMPRESS => 'gzip',
+	suffix   => 'gz',
+	DIST_DEFAULT => 'd/KDB.pm tardist',
+    },
     'clean'     => { FILES => 'KDB.pm' },
 );
+
+sub MY::postamble {
+    my $TARG = MM->catfile('d', 'KDB.pm');
+    qq!$TARG : KDB.in
+	\$(PERL) gen_dummy_kdb_pm.plx
+!
+}

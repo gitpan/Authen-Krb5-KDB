@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::V4;
 
-# $Id: V4.pm,v 1.9 2002/04/17 22:13:13 steiner Exp $
+# $Id: V4.pm,v 1.10 2002/10/09 20:41:32 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB::V3;
@@ -9,7 +9,7 @@ use vars qw($VERSION @ISA);
 
 @ISA = ( "Authen::Krb5::KDB::V3" );
 
-$VERSION = do{my@r=q$Revision: 1.9 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.10 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 my %Policy_Fields = (
     'type'           => 0,
@@ -362,7 +362,7 @@ B<kadmin>.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT

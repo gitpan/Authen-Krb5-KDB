@@ -176,7 +176,7 @@ KRB5_KDB_DEF_FLAGS
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 =head1 COPYRIGHT
 

@@ -1,13 +1,13 @@
 package Authen::Krb5::KDB::V2;
 
-# $Id: V2.pm,v 1.7 2002/03/20 16:29:57 steiner Exp $
+# $Id: V2.pm,v 1.8 2002/10/09 20:42:10 steiner Exp $
 
 use Carp;
 use POSIX qw(strftime);
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 sub new {
     my $proto = shift;
@@ -142,7 +142,7 @@ Methods to retrieve and set data fields are:
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT

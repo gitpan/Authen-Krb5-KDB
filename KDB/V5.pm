@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::V5;
 
-# $Id: V5.pm,v 1.7 2002/04/17 22:15:47 steiner Exp $
+# $Id: V5.pm,v 1.8 2002/10/09 20:41:42 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB::V4;
@@ -9,7 +9,7 @@ use vars qw($VERSION @ISA);
 
 @ISA = ( "Authen::Krb5::KDB::V4" );
 
-$VERSION = do{my@r=q$Revision: 1.7 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # Basic format of the data is the same as V4, just the encoded data
 # is different.
@@ -223,7 +223,7 @@ B<kadmin>.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT

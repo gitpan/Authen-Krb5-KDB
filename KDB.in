@@ -1,12 +1,12 @@
 package Authen::Krb5::KDB;
 
-# $Id: KDB.in,v 1.8 2002/04/18 21:13:18 steiner Exp $
+# $Id: KDB.in,v 1.10 2002/10/09 20:40:14 steiner Exp $
 
 use Carp;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.8 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.10 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 my $Version;
 
@@ -60,6 +60,7 @@ sub new {
     $self->{'policies'} = [];
 
     open(KDB, $self->{'file'}) or croak "Can't open $self->{'file'}: $!";
+    $self->{'_FH'} = *KDB{IO};
     $self->{'header'} = <KDB>;
 
     if ($self->{'header'} eq $r1_3_version{'header'}) {
@@ -94,7 +95,8 @@ sub new {
 sub next {
     my $self = shift;
     my $entry_type;
-    my $line = <KDB>;
+    my $fh = $self->{'_FH'};
+    my $line = <$fh>;
     return undef if (not $line);
     chomp($line);
     $LineNo++;
@@ -137,7 +139,7 @@ sub policies {
 
 sub close {
     my $self = shift;
-    close KDB or croak "Can't close $self->{'file'}: $!/$?";
+    close $self->{'_FH'} or croak "Can't close $self->{'file'}: $!/$?";
     return 1;
 }
 
@@ -231,7 +233,7 @@ errors from the pipe.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 =head1 COPYRIGHT
 

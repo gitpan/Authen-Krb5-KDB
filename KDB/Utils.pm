@@ -1,13 +1,13 @@
 package Authen::Krb5::KDB::Utils;
 
-# $Id: Utils.pm,v 1.1 2002/04/16 22:43:56 steiner Exp $
+# $Id: Utils.pm,v 1.2 2002/10/09 20:42:21 steiner Exp $
 
 use Carp;
 use POSIX qw(strftime);
 use strict;
 use vars qw($VERSION @ISA @EXPORT);
 
-$VERSION = do{my@r=q$Revision: 1.1 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.2 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 require Exporter;
 @ISA = qw(Exporter);
@@ -77,7 +77,7 @@ of the second.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT

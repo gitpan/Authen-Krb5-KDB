@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::TL;
 
-# $Id: TL.pm,v 1.2 2002/05/06 20:12:14 steiner Exp $
+# $Id: TL.pm,v 1.3 2002/10/09 20:42:31 steiner Exp $
 
 use Carp;
 use Authen::Krb5::KDB_H qw(:TLTypes);
@@ -8,7 +8,7 @@ use Authen::Krb5::KDB::Utils;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.2 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.3 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # If value is 1, the value is read/write and we build the accessor function;
 #  if 0, the value is read-only and an accessor function is built.
@@ -178,7 +178,7 @@ form "Date: mod_name\@".
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT

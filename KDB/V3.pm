@@ -1,6 +1,6 @@
 package Authen::Krb5::KDB::V3;
 
-# $Id: V3.pm,v 1.12 2002/04/17 22:16:58 steiner Exp $
+# $Id: V3.pm,v 1.13 2002/10/09 20:41:55 steiner Exp $
 
 use Carp;
 use POSIX qw(strftime);
@@ -11,7 +11,7 @@ use Authen::Krb5::KDB::Utils;
 use strict;
 use vars qw($VERSION);
 
-$VERSION = do{my@r=q$Revision: 1.12 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
+$VERSION = do{my@r=q$Revision: 1.13 $=~/\d+/g;sprintf '%d.'.'%02d'x$#r,@r};
 
 # If value is 1, the value is read/write and we build the accessor function;
 #  if 0, the value is read-only and an accessor function is built.
@@ -594,7 +594,7 @@ Return a string of all the attributes set for this principal.
 
 =head1 AUTHOR
 
-Dave Steiner, E<lt>steiner@td.rutgers.eduE<gt>
+Dave Steiner, E<lt>steiner@bakerst.rutgers.eduE<gt>
 
 
 =head1 COPYRIGHT
